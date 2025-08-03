@@ -514,7 +514,11 @@ class BookApp {
 
     // Update book preview on share page with current customization
     this.displayBook(this.shareBookCoverFront, this.shareBookCoverInside);
-    this.shareNoteDisplay.textContent = this.noteInput.value;
+    // Preserve formatting in share display
+    const formattedNote = this.noteInput.value
+      .replace(/\n/g, "<br>") // Convert newlines to <br> tags
+      .replace(/\s{2,}/g, (match) => "&nbsp;".repeat(match.length)); // Preserve multiple spaces
+    this.shareNoteDisplay.innerHTML = formattedNote;
     this.shareNoteDisplay.style.fontFamily = this.noteInput.style.fontFamily;
     this.shareNoteDisplay.style.fontSize = this.noteInput.style.fontSize;
     this.shareNoteDisplay.classList.add("visible"); // Ensure it's visible
@@ -924,11 +928,42 @@ class BookApp {
   }
 
   loadSavedData() {
-    const savedNote = localStorage.getItem("bookNote");
-    // Call showNoteDisplay, which now handles visibility based on content
-    this.showNoteDisplay(savedNote || ""); // Pass empty string if no saved note
+    // Don't load saved note on page refresh - start with blank slate
+    // Only load saved data if we're in view-only mode (shared link)
+    if (this.isViewOnlyMode) {
+      const savedNote = localStorage.getItem("bookNote");
+      this.showNoteDisplay(savedNote || "");
+    } else {
+      // Clear any existing note data for fresh start
+      this.clearNoteData();
+    }
     // Set initial font to Caveat (or default)
     this.setFont("Caveat");
+  }
+
+  clearNoteData() {
+    // Clear note from localStorage
+    localStorage.removeItem("bookNote");
+    // Clear note input and display
+    if (this.noteInput) this.noteInput.value = "";
+    if (this.noteDisplay) this.noteDisplay.textContent = "";
+    if (this.noteDisplay) this.noteDisplay.classList.remove("visible");
+    if (this.noteInput) this.noteInput.style.display = "block";
+    // Clear class property
+    this.currentNoteContent = "";
+
+    // Clear stickers from the page
+    if (this.bookFirstPage) {
+      const currentStickers = this.bookFirstPage.querySelectorAll(".sticker");
+      currentStickers.forEach((sticker) => sticker.remove());
+    }
+    this.stickers = []; // Clear the stickers array
+
+    // Clear selected book from localStorage
+    localStorage.removeItem("selectedBook");
+    this.selectedBook = null;
+
+    console.log("Note, sticker, and book data cleared for fresh start");
   }
 
   // Share functions (dummy implementations for email/social)
@@ -1014,6 +1049,9 @@ class BookApp {
       }
 
       console.log("Shareable link copied to clipboard:", shareableLink);
+
+      // Clear note data after successful sharing
+      this.clearNoteData();
     } catch (error) {
       console.error("Error saving customization or copying link:", error);
       alert("Failed to generate shareable link. Please try again.");
@@ -1066,7 +1104,11 @@ class BookApp {
 
         // Set note content and font
         if (this.shareNoteDisplay) {
-          this.shareNoteDisplay.textContent = noteContent;
+          // Preserve formatting in view-only display
+          const formattedNote = noteContent
+            .replace(/\n/g, "<br>") // Convert newlines to <br> tags
+            .replace(/\s{2,}/g, (match) => "&nbsp;".repeat(match.length)); // Preserve multiple spaces
+          this.shareNoteDisplay.innerHTML = formattedNote;
           this.shareNoteDisplay.style.fontFamily = noteFont;
           this.shareNoteDisplay.classList.add("visible");
         }

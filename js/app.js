@@ -106,6 +106,8 @@ class BookApp {
     ); // Original heading
     this.shareDetailsWrapper = document.getElementById("shareDetailsWrapper"); // Wrapper for sender name and copy button
     this.copyTooltip = document.getElementById("copyTooltip"); // Tooltip element
+    this.createYourOwnCta = document.getElementById("createYourOwnCta"); // Create your own CTA
+    this.createYourOwnBtn = document.getElementById("createYourOwnBtn"); // Create your own button
 
     // Modal Elements (These are not currently used for back navigation but are kept in the code)
     this.confirmationModal = document.getElementById("confirmationModal");
@@ -373,6 +375,8 @@ class BookApp {
     if (this.mainLandingPage) this.mainLandingPage.style.display = "flex";
     if (this.bookDisplayArea) this.bookDisplayArea.style.display = "none";
     if (this.sharePage) this.sharePage.style.display = "none";
+    // Hide CTA when showing main landing page
+    if (this.createYourOwnCta) this.createYourOwnCta.style.display = "none";
     this.fetchTopBooks(); // Ensure top books are fetched when returning to landing page
   }
 
@@ -380,6 +384,8 @@ class BookApp {
     if (this.mainLandingPage) this.mainLandingPage.style.display = "none";
     if (this.bookDisplayArea) this.bookDisplayArea.style.display = "flex";
     if (this.sharePage) this.sharePage.style.display = "none";
+    // Hide CTA when showing book display area
+    if (this.createYourOwnCta) this.createYourOwnCta.style.display = "none";
     this.closeShareBook(); // Ensure share page book is closed when returning
   }
 
@@ -394,6 +400,7 @@ class BookApp {
       this.sharePageOriginalHeading.style.display = "block";
     if (this.shareDetailsWrapper)
       this.shareDetailsWrapper.classList.remove("view-only-hidden");
+    if (this.createYourOwnCta) this.createYourOwnCta.style.display = "none";
 
     // Explicitly hide the first page of the share book initially
     if (this.shareBookFirstPage) {
@@ -410,11 +417,9 @@ class BookApp {
     // Update book preview on share page with current customization
     this.displayBook(this.shareBookCoverFront, this.shareBookCoverInside);
 
-    // Get the current note content - prefer noteDisplay if visible, otherwise use noteInput
+    // Get the current note content - always use noteInput.value to preserve original formatting
     let currentNoteContent = "";
-    if (this.noteDisplay && this.noteDisplay.classList.contains("visible")) {
-      currentNoteContent = this.noteDisplay.textContent;
-    } else if (this.noteInput) {
+    if (this.noteInput) {
       currentNoteContent = this.noteInput.value;
     }
 
@@ -432,7 +437,11 @@ class BookApp {
 
     const currentNoteFont = this.noteInput.style.fontFamily || "Caveat";
 
-    this.shareNoteDisplay.textContent = currentNoteContent;
+    // Preserve formatting in share display
+    const formattedNote = currentNoteContent
+      .replace(/\n/g, "<br>") // Convert newlines to <br> tags
+      .replace(/\s{2,}/g, (match) => "&nbsp;".repeat(match.length)); // Preserve multiple spaces
+    this.shareNoteDisplay.innerHTML = formattedNote;
     this.shareNoteDisplay.style.fontFamily = currentNoteFont;
     this.shareNoteDisplay.style.fontSize = this.noteInput.style.fontSize;
     this.shareNoteDisplay.classList.add("visible"); // Ensure it's visible
@@ -606,7 +615,11 @@ class BookApp {
         this.noteDisplay.textContent = ""; // Clear display if no note
       } else {
         // If note has content, show display
-        this.noteDisplay.textContent = note;
+        // Preserve formatting by using innerHTML with proper line break handling
+        const formattedNote = note
+          .replace(/\n/g, "<br>") // Convert newlines to <br> tags
+          .replace(/\s{2,}/g, (match) => "&nbsp;".repeat(match.length)); // Preserve multiple spaces
+        this.noteDisplay.innerHTML = formattedNote;
         this.noteDisplay.classList.add("visible");
         this.noteInput.style.display = "none";
       }
@@ -620,6 +633,15 @@ class BookApp {
 
   editNote() {
     if (this.noteInput) {
+      // Convert HTML content back to plain text for the textarea
+      if (this.noteDisplay && this.noteDisplay.classList.contains("visible")) {
+        // Convert <br> tags back to newlines and &nbsp; back to spaces
+        let plainText = this.noteDisplay.innerHTML
+          .replace(/<br\s*\/?>/gi, "\n") // Convert <br> tags to newlines
+          .replace(/&nbsp;/g, " ") // Convert &nbsp; back to spaces
+          .replace(/<[^>]*>/g, ""); // Remove any other HTML tags
+        this.noteInput.value = plainText;
+      }
       this.noteInput.style.display = "block";
       this.noteInput.focus(); // Focus on input when editing
     }
@@ -882,11 +904,42 @@ class BookApp {
   }
 
   loadSavedData() {
-    const savedNote = localStorage.getItem("bookNote");
-    // Call showNoteDisplay, which now handles visibility based on content
-    this.showNoteDisplay(savedNote || ""); // Pass empty string if no saved note
+    // Don't load saved note on page refresh - start with blank slate
+    // Only load saved data if we're in view-only mode (shared link)
+    if (this.isViewOnlyMode) {
+      const savedNote = localStorage.getItem("bookNote");
+      this.showNoteDisplay(savedNote || "");
+    } else {
+      // Clear any existing note data for fresh start
+      this.clearNoteData();
+    }
     // Set initial font to Caveat (or default)
     this.setFont("Caveat");
+  }
+
+  clearNoteData() {
+    // Clear note from localStorage
+    localStorage.removeItem("bookNote");
+    // Clear note input and display
+    if (this.noteInput) this.noteInput.value = "";
+    if (this.noteDisplay) this.noteDisplay.textContent = "";
+    if (this.noteDisplay) this.noteDisplay.classList.remove("visible");
+    if (this.noteInput) this.noteInput.style.display = "block";
+    // Clear class property
+    this.currentNoteContent = "";
+
+    // Clear stickers from the page
+    if (this.bookFirstPage) {
+      const currentStickers = this.bookFirstPage.querySelectorAll(".sticker");
+      currentStickers.forEach((sticker) => sticker.remove());
+    }
+    this.stickers = []; // Clear the stickers array
+
+    // Clear selected book from localStorage
+    localStorage.removeItem("selectedBook");
+    this.selectedBook = null;
+
+    console.log("Note, sticker, and book data cleared for fresh start");
   }
 
   // Share functions (dummy implementations for email/social)
@@ -922,20 +975,15 @@ class BookApp {
     // Get the current note content with multiple fallbacks
     let noteContent = "";
 
-    // First priority: class property (most reliable)
-    if (this.currentNoteContent && this.currentNoteContent.trim() !== "") {
-      noteContent = this.currentNoteContent;
-    } else if (this.noteInput && this.noteInput.value.trim() !== "") {
-      // Second priority: input value (save it first)
+    // First priority: input value (preserves original formatting)
+    if (this.noteInput && this.noteInput.value.trim() !== "") {
       noteContent = this.noteInput.value;
-      this.saveNote(noteContent);
-      this.showNoteDisplay(noteContent);
     } else if (
-      this.noteDisplay &&
-      this.noteDisplay.classList.contains("visible")
+      this.currentNoteContent &&
+      this.currentNoteContent.trim() !== ""
     ) {
-      // Third priority: displayed note content
-      noteContent = this.noteDisplay.textContent;
+      // Second priority: class property
+      noteContent = this.currentNoteContent;
     } else {
       // Last resort: localStorage
       noteContent = localStorage.getItem("bookNote") || "";
@@ -1026,6 +1074,9 @@ class BookApp {
       }
 
       console.log("Shareable link copied to clipboard:", shareableLink);
+
+      // Clear note data after successful sharing
+      this.clearNoteData();
     } catch (error) {
       console.error("Error saving customization or copying link:", error);
 
@@ -1069,6 +1120,9 @@ class BookApp {
           }, 2000); // Show for 2 seconds
         }
 
+        // Clear note data after successful local sharing
+        this.clearNoteData();
+
         // Tooltip is already shown above, no need for additional notification
       } catch (fallbackError) {
         console.error("Fallback also failed:", fallbackError);
@@ -1088,11 +1142,12 @@ class BookApp {
       this.sharePageOriginalHeading.style.display = "none";
     if (this.shareDetailsWrapper)
       this.shareDetailsWrapper.style.display = "none";
-    // The back to editing link is still useful in view-only mode to go back to customization.
-    // if (this.backToEditingLink) this.backToEditingLink.style.display = 'none'; // Hide back to editing
+    // Hide back to editing link in view-only mode since users shouldn't be able to edit shared content
+    if (this.backToEditingLink) this.backToEditingLink.style.display = "none";
 
-    // Show view-only heading
+    // Show view-only heading and CTA
     if (this.viewOnlyHeading) this.viewOnlyHeading.style.display = "block";
+    if (this.createYourOwnCta) this.createYourOwnCta.style.display = "flex";
 
     // Check if this is a local view (from localStorage)
     const urlParams = new URLSearchParams(window.location.search);
@@ -1162,7 +1217,11 @@ class BookApp {
 
       // Set note content and font
       if (this.shareNoteDisplay) {
-        this.shareNoteDisplay.textContent = noteContent;
+        // Preserve formatting in view-only display
+        const formattedNote = noteContent
+          .replace(/\n/g, "<br>") // Convert newlines to <br> tags
+          .replace(/\s{2,}/g, (match) => "&nbsp;".repeat(match.length)); // Preserve multiple spaces
+        this.shareNoteDisplay.innerHTML = formattedNote;
         this.shareNoteDisplay.style.fontFamily = noteFont;
         this.shareNoteDisplay.classList.add("visible");
       }
@@ -1223,13 +1282,16 @@ class BookApp {
   updateSharePageNote() {
     if (this.shareNoteDisplay) {
       let currentNoteContent = "";
-      if (this.noteDisplay && this.noteDisplay.classList.contains("visible")) {
-        currentNoteContent = this.noteDisplay.textContent;
-      } else if (this.noteInput) {
+      // Always use noteInput.value to preserve original formatting
+      if (this.noteInput) {
         currentNoteContent = this.noteInput.value;
       }
 
-      this.shareNoteDisplay.textContent = currentNoteContent;
+      // Preserve formatting in share display as well
+      const formattedNote = currentNoteContent
+        .replace(/\n/g, "<br>") // Convert newlines to <br> tags
+        .replace(/\s{2,}/g, (match) => "&nbsp;".repeat(match.length)); // Preserve multiple spaces
+      this.shareNoteDisplay.innerHTML = formattedNote;
       this.shareNoteDisplay.style.fontFamily =
         this.noteInput.style.fontFamily || "Caveat";
       this.shareNoteDisplay.classList.add("visible");
@@ -1350,6 +1412,17 @@ class BookApp {
     addListener(this.backToEditingLink, "click", (e) => {
       e.preventDefault();
       this.showBookDisplayArea();
+    });
+
+    // Create Your Own CTA Button (only in view-only mode)
+    addListener(this.createYourOwnBtn, "click", (e) => {
+      e.preventDefault();
+      // Clear any URL parameters to go to the home page
+      window.history.replaceState({}, document.title, window.location.pathname);
+      // Show the main landing page
+      this.showMainLandingPage();
+      // Reset view-only mode
+      this.isViewOnlyMode = false;
     });
 
     // Share Page Book Interaction - disabled to prevent closing
