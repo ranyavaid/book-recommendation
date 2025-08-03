@@ -1104,8 +1104,6 @@ class BookApp {
     }
   }
 
-
-
   // Event Listeners Setup
   setupEventListeners() {
     // Helper to safely add event listeners
