@@ -1,13 +1,13 @@
-# Book Gift App
+# Book Recommendation App
 
-A beautiful web application that allows users to search for books, customize them with personal notes and stickers, and share them as virtual gifts.
+A beautiful web application that allows users to search for books, customize them with personal notes and stickers, and share their book recommendations with others.
 
 ## Features
 
 - 📚 Search for books using Google Books API
 - ✍️ Add personalized notes with custom fonts
-- 🌸 Add decorative stickers to your book
-- 📤 Share your customized book with others
+- 🌸 Add decorative stickers to your book recommendation
+- 📤 Share your book recommendations with others
 - 📱 Responsive design for all devices
 - 🔥 Firebase integration for data persistence
 
@@ -22,8 +22,8 @@ A beautiful web application that allows users to search for books, customize the
 ## Getting Started
 
 1. Clone this repository
-2. Open `Book.html` in your web browser
-3. Start customizing your book gifts!
+2. Open `index.html` in your web browser
+3. Start creating and sharing your book recommendations!
 
 ## Deployment
 
