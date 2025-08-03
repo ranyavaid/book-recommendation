@@ -954,11 +954,10 @@ class BookApp {
           }, 2000); // Show for 2 seconds
         }
 
-        // Show a user-friendly notification instead of an alert
-        this.showNotification("Local link created successfully!", "success");
+        // Tooltip is already shown above, no need for additional notification
       } catch (fallbackError) {
         console.error("Fallback also failed:", fallbackError);
-        this.showNotification("Failed to generate shareable link. Please try again.", "error");
+        // Just log the error, tooltip already shows success when it works
       }
     }
   }
@@ -1105,46 +1104,7 @@ class BookApp {
     }
   }
 
-  // User-friendly notification system
-  showNotification(message, type = "info") {
-    // Create notification element if it doesn't exist
-    let notification = document.getElementById("notification");
-    if (!notification) {
-      notification = document.createElement("div");
-      notification.id = "notification";
-      notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 12px 20px;
-        border-radius: 5px;
-        color: white;
-        font-weight: 500;
-        z-index: 10000;
-        opacity: 0;
-        transform: translateX(100%);
-        transition: all 0.3s ease-in-out;
-        max-width: 300px;
-        word-wrap: break-word;
-      `;
-      document.body.appendChild(notification);
-    }
 
-    // Set notification content and style based on type
-    notification.textContent = message;
-    notification.style.background = type === "success" ? "#4CAF50" : 
-                                  type === "error" ? "#f44336" : "#2196F3";
-
-    // Show notification
-    notification.style.opacity = "1";
-    notification.style.transform = "translateX(0)";
-
-    // Hide notification after 3 seconds
-    setTimeout(() => {
-      notification.style.opacity = "0";
-      notification.style.transform = "translateX(100%)";
-    }, 3000);
-  }
 
   // Event Listeners Setup
   setupEventListeners() {
