@@ -48,6 +48,23 @@ Make sure your Firebase config in `js/app.js` matches your project:
 - Project ID: `bookrec-d5c37`
 - API Key: `AIzaSyCSVx_kO5BihsOLuBgpxD_WUVPRy_NiWb0`
 
+### 4. Add GitHub Pages Domain (for production)
+
+If you're deploying to GitHub Pages, you need to add the domain to Firebase:
+
+1. Go to **Firebase Console** → **Authentication** → **Settings** → **Authorized domains**
+2. Add your GitHub Pages domain: `ranyavaid.github.io`
+3. Go to **Firestore Database** → **Rules** and ensure they allow your domain
+4. If using a custom domain, add that as well
+
+### 5. Test Firebase Connection
+
+To test if Firebase is working:
+1. Open browser console (F12)
+2. Look for Firebase authentication messages
+3. Try creating a shareable link
+4. Check for any error messages in the console
+
 ## Fallback Solution
 
 The app now includes fallback functionality:
