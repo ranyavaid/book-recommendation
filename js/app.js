@@ -406,7 +406,7 @@ class BookApp {
 
     // Update book preview on share page with current customization
     this.displayBook(this.shareBookCoverFront, this.shareBookCoverInside);
-    
+
     // Get the current note content - prefer noteDisplay if visible, otherwise use noteInput
     let currentNoteContent = "";
     if (this.noteDisplay && this.noteDisplay.classList.contains("visible")) {
@@ -414,8 +414,15 @@ class BookApp {
     } else if (this.noteInput) {
       currentNoteContent = this.noteInput.value;
     }
-    const currentNoteFont = this.noteInput.style.fontFamily || "Caveat";
     
+    // Debug logging
+    console.log("Share page - noteDisplay visible:", this.noteDisplay?.classList.contains("visible"));
+    console.log("Share page - noteDisplay content:", this.noteDisplay?.textContent);
+    console.log("Share page - noteInput value:", this.noteInput?.value);
+    console.log("Share page - final content:", currentNoteContent);
+    
+    const currentNoteFont = this.noteInput.style.fontFamily || "Caveat";
+
     this.shareNoteDisplay.textContent = currentNoteContent;
     this.shareNoteDisplay.style.fontFamily = currentNoteFont;
     this.shareNoteDisplay.style.fontSize = this.noteInput.style.fontSize;
@@ -544,6 +551,10 @@ class BookApp {
   // Notes and Stickers Functionality
   saveNote(note) {
     localStorage.setItem("bookNote", note);
+    // Also update share page if we're on it
+    if (this.sharePage && this.sharePage.style.display === "flex") {
+      this.updateSharePageNote();
+    }
   }
 
   showNoteDisplay(note) {
@@ -558,6 +569,11 @@ class BookApp {
         this.noteDisplay.textContent = note;
         this.noteDisplay.classList.add("visible");
         this.noteInput.style.display = "none";
+      }
+      
+      // Update share page if we're on it
+      if (this.sharePage && this.sharePage.style.display === "flex") {
+        this.updateSharePageNote();
       }
     }
   }
@@ -1111,6 +1127,22 @@ class BookApp {
           </button>
         </div>
       `;
+    }
+  }
+
+  // Update share page note content
+  updateSharePageNote() {
+    if (this.shareNoteDisplay) {
+      let currentNoteContent = "";
+      if (this.noteDisplay && this.noteDisplay.classList.contains("visible")) {
+        currentNoteContent = this.noteDisplay.textContent;
+      } else if (this.noteInput) {
+        currentNoteContent = this.noteInput.value;
+      }
+      
+      this.shareNoteDisplay.textContent = currentNoteContent;
+      this.shareNoteDisplay.style.fontFamily = this.noteInput.style.fontFamily || "Caveat";
+      this.shareNoteDisplay.classList.add("visible");
     }
   }
 
