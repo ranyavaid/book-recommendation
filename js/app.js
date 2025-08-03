@@ -50,6 +50,9 @@ class BookApp {
     this.initialAuthToken =
       typeof __initial_auth_token !== "undefined" ? __initial_auth_token : null;
 
+    // Store current note content as a class property for easy access
+    this.currentNoteContent = "";
+
     // Main Landing Page Container
     this.mainLandingPage = document.getElementById("mainLandingPage");
 
@@ -434,6 +437,22 @@ class BookApp {
     this.shareNoteDisplay.style.fontSize = this.noteInput.style.fontSize;
     this.shareNoteDisplay.classList.add("visible"); // Ensure it's visible
 
+    // Open the book on share page if there's note content
+    if (currentNoteContent.trim() !== "" && this.shareBookCoverWrapper) {
+      this.shareBookCoverWrapper.classList.add("open");
+      const shareBookModel = document.querySelector("#sharePage .book-model");
+      if (shareBookModel) {
+        shareBookModel.classList.add("open");
+      }
+      this.isShareBookOpen = true;
+
+      // Force the first page to be visible
+      if (this.shareBookFirstPage) {
+        this.shareBookFirstPage.style.opacity = "1";
+        this.shareBookFirstPage.style.pointerEvents = "auto";
+      }
+    }
+
     // Clear existing stickers on the share book preview
     const currentShareStickers =
       this.shareBookFirstPage.querySelectorAll(".sticker");
@@ -483,6 +502,20 @@ class BookApp {
 
   toggleShareBook() {
     if (this.shareBookCoverWrapper) {
+      // Check if we're on the share page and if there's note content
+      const isOnSharePage =
+        this.sharePage && this.sharePage.style.display === "flex";
+      const hasNoteContent =
+        this.shareNoteDisplay &&
+        this.shareNoteDisplay.textContent.trim() !== "";
+
+      // If on share page with note content, only allow opening, not closing
+      if (isOnSharePage && hasNoteContent && this.isShareBookOpen) {
+        // Don't allow closing - keep the book open
+        return;
+      }
+
+      // Normal toggle behavior for other cases
       this.shareBookCoverWrapper.classList.toggle("open");
       // Get the book-model element within sharePage
       const shareBookModel = document.querySelector("#sharePage .book-model");
@@ -557,6 +590,7 @@ class BookApp {
   // Notes and Stickers Functionality
   saveNote(note) {
     localStorage.setItem("bookNote", note);
+    this.currentNoteContent = note; // Store in class property
     // Also update share page if we're on it
     if (this.sharePage && this.sharePage.style.display === "flex") {
       this.updateSharePageNote();
@@ -884,22 +918,57 @@ class BookApp {
     }
 
     const senderName = this.senderNameInput.value.trim();
-    
-    // Get the current note content - prefer noteDisplay if visible, otherwise use noteInput
+
+    // Get the current note content with multiple fallbacks
     let noteContent = "";
-    if (this.noteDisplay && this.noteDisplay.classList.contains("visible")) {
-      noteContent = this.noteDisplay.textContent;
-    } else if (this.noteInput) {
+
+    // First priority: class property (most reliable)
+    if (this.currentNoteContent && this.currentNoteContent.trim() !== "") {
+      noteContent = this.currentNoteContent;
+    } else if (this.noteInput && this.noteInput.value.trim() !== "") {
+      // Second priority: input value (save it first)
       noteContent = this.noteInput.value;
+      this.saveNote(noteContent);
+      this.showNoteDisplay(noteContent);
+    } else if (
+      this.noteDisplay &&
+      this.noteDisplay.classList.contains("visible")
+    ) {
+      // Third priority: displayed note content
+      noteContent = this.noteDisplay.textContent;
+    } else {
+      // Last resort: localStorage
+      noteContent = localStorage.getItem("bookNote") || "";
     }
-    
+
     const noteFont = this.noteInput.style.fontFamily || "Caveat";
 
     // Debug logging for shareable link creation
-    console.log("Creating shareable link - noteDisplay visible:", this.noteDisplay?.classList.contains("visible"));
-    console.log("Creating shareable link - noteDisplay content:", this.noteDisplay?.textContent);
-    console.log("Creating shareable link - noteInput value:", this.noteInput?.value);
+    console.log(
+      "Creating shareable link - class property content:",
+      this.currentNoteContent
+    );
+    console.log(
+      "Creating shareable link - noteDisplay visible:",
+      this.noteDisplay?.classList.contains("visible")
+    );
+    console.log(
+      "Creating shareable link - noteDisplay content:",
+      this.noteDisplay?.textContent
+    );
+    console.log(
+      "Creating shareable link - noteInput value:",
+      this.noteInput?.value
+    );
+    console.log(
+      "Creating shareable link - localStorage content:",
+      localStorage.getItem("bookNote")
+    );
     console.log("Creating shareable link - final note content:", noteContent);
+    console.log(
+      "Creating shareable link - note content length:",
+      noteContent.length
+    );
 
     // Prepare sticker data for saving (only necessary properties)
     const stickersToSave = this.stickers.map((s) => ({
@@ -1164,6 +1233,42 @@ class BookApp {
       this.shareNoteDisplay.style.fontFamily =
         this.noteInput.style.fontFamily || "Caveat";
       this.shareNoteDisplay.classList.add("visible");
+
+      // Force visibility with inline styles as backup
+      this.shareNoteDisplay.style.display = "block";
+      this.shareNoteDisplay.style.color = "#5d4e37";
+      this.shareNoteDisplay.style.fontSize = "20px";
+      this.shareNoteDisplay.style.lineHeight = "1.6";
+
+      // Debug logging for share page note display
+      console.log(
+        "Share page note display - text content:",
+        this.shareNoteDisplay.textContent
+      );
+      console.log(
+        "Share page note display - has visible class:",
+        this.shareNoteDisplay.classList.contains("visible")
+      );
+      console.log(
+        "Share page note display - computed display:",
+        window.getComputedStyle(this.shareNoteDisplay).display
+      );
+
+      // Ensure the share page book is opened to show the note content
+      if (this.shareBookCoverWrapper && currentNoteContent.trim() !== "") {
+        this.shareBookCoverWrapper.classList.add("open");
+        const shareBookModel = document.querySelector("#sharePage .book-model");
+        if (shareBookModel) {
+          shareBookModel.classList.add("open");
+        }
+        this.isShareBookOpen = true;
+
+        // Force the first page to be visible
+        if (this.shareBookFirstPage) {
+          this.shareBookFirstPage.style.opacity = "1";
+          this.shareBookFirstPage.style.pointerEvents = "auto";
+        }
+      }
     }
   }
 
@@ -1247,14 +1352,11 @@ class BookApp {
       this.showBookDisplayArea();
     });
 
-    // Share Page Book Interaction (always active)
-    addListener(this.shareBookCoverFront, "click", () =>
-      this.toggleShareBook()
-    ); // This correctly maps to the share page book
-    addListener(this.shareBookCoverInside, "click", () =>
-      this.toggleShareBook()
-    ); // Also allow tapping inside cover
-    addListener(this.shareBookFirstPage, "click", () => this.toggleShareBook()); // Added tap for first page
+    // Share Page Book Interaction - disabled to prevent closing
+    // The book should stay open on share page to show note content
+    // addListener(this.shareBookCoverFront, "click", () => this.toggleShareBook());
+    // addListener(this.shareBookCoverInside, "click", () => this.toggleShareBook());
+    // addListener(this.shareBookFirstPage, "click", () => this.toggleShareBook());
 
     // Close sub-menus when clicking outside (only relevant in customization mode)
     if (!this.isViewOnlyMode) {
