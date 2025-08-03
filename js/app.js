@@ -406,8 +406,18 @@ class BookApp {
 
     // Update book preview on share page with current customization
     this.displayBook(this.shareBookCoverFront, this.shareBookCoverInside);
-    this.shareNoteDisplay.textContent = this.noteInput.value;
-    this.shareNoteDisplay.style.fontFamily = this.noteInput.style.fontFamily;
+    
+    // Get the current note content - prefer noteDisplay if visible, otherwise use noteInput
+    let currentNoteContent = "";
+    if (this.noteDisplay && this.noteDisplay.classList.contains("visible")) {
+      currentNoteContent = this.noteDisplay.textContent;
+    } else if (this.noteInput) {
+      currentNoteContent = this.noteInput.value;
+    }
+    const currentNoteFont = this.noteInput.style.fontFamily || "Caveat";
+    
+    this.shareNoteDisplay.textContent = currentNoteContent;
+    this.shareNoteDisplay.style.fontFamily = currentNoteFont;
     this.shareNoteDisplay.style.fontSize = this.noteInput.style.fontSize;
     this.shareNoteDisplay.classList.add("visible"); // Ensure it's visible
 
