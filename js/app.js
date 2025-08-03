@@ -414,13 +414,19 @@ class BookApp {
     } else if (this.noteInput) {
       currentNoteContent = this.noteInput.value;
     }
-    
+
     // Debug logging
-    console.log("Share page - noteDisplay visible:", this.noteDisplay?.classList.contains("visible"));
-    console.log("Share page - noteDisplay content:", this.noteDisplay?.textContent);
+    console.log(
+      "Share page - noteDisplay visible:",
+      this.noteDisplay?.classList.contains("visible")
+    );
+    console.log(
+      "Share page - noteDisplay content:",
+      this.noteDisplay?.textContent
+    );
     console.log("Share page - noteInput value:", this.noteInput?.value);
     console.log("Share page - final content:", currentNoteContent);
-    
+
     const currentNoteFont = this.noteInput.style.fontFamily || "Caveat";
 
     this.shareNoteDisplay.textContent = currentNoteContent;
@@ -570,7 +576,7 @@ class BookApp {
         this.noteDisplay.classList.add("visible");
         this.noteInput.style.display = "none";
       }
-      
+
       // Update share page if we're on it
       if (this.sharePage && this.sharePage.style.display === "flex") {
         this.updateSharePageNote();
@@ -878,8 +884,22 @@ class BookApp {
     }
 
     const senderName = this.senderNameInput.value.trim();
-    const noteContent = this.noteInput.value;
+    
+    // Get the current note content - prefer noteDisplay if visible, otherwise use noteInput
+    let noteContent = "";
+    if (this.noteDisplay && this.noteDisplay.classList.contains("visible")) {
+      noteContent = this.noteDisplay.textContent;
+    } else if (this.noteInput) {
+      noteContent = this.noteInput.value;
+    }
+    
     const noteFont = this.noteInput.style.fontFamily || "Caveat";
+
+    // Debug logging for shareable link creation
+    console.log("Creating shareable link - noteDisplay visible:", this.noteDisplay?.classList.contains("visible"));
+    console.log("Creating shareable link - noteDisplay content:", this.noteDisplay?.textContent);
+    console.log("Creating shareable link - noteInput value:", this.noteInput?.value);
+    console.log("Creating shareable link - final note content:", noteContent);
 
     // Prepare sticker data for saving (only necessary properties)
     const stickersToSave = this.stickers.map((s) => ({
@@ -1139,9 +1159,10 @@ class BookApp {
       } else if (this.noteInput) {
         currentNoteContent = this.noteInput.value;
       }
-      
+
       this.shareNoteDisplay.textContent = currentNoteContent;
-      this.shareNoteDisplay.style.fontFamily = this.noteInput.style.fontFamily || "Caveat";
+      this.shareNoteDisplay.style.fontFamily =
+        this.noteInput.style.fontFamily || "Caveat";
       this.shareNoteDisplay.classList.add("visible");
     }
   }
