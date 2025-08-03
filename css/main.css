@@ -1,0 +1,214 @@
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Lighter cream white background for the first page */
+    background: #fdfdfd;
+    min-height: 100vh;
+    color: #5d4e37;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    /* Stacks children vertically */
+    align-items: center;
+    /* Centers children horizontally */
+    justify-content: center;
+}
+
+/* Ensure the main landing page content is stacked and centered */
+#mainLandingPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    /* Ensure it takes full width within its parent container */
+}
+
+/* Main heading style for the first page */
+.main-heading {
+    font-family: 'Inter', sans-serif;
+    font-size: 48px;
+    /* Set to 48px */
+    font-weight: 700;
+    /* Bold */
+    color: #5d4e37;
+    margin-bottom: 10px;
+    text-shadow: none;
+    /* Explicitly removed text-shadow */
+    text-align: center;
+    /* Ensure heading text is centered */
+    width: 100%;
+    /* Ensure it spans full width for centering */
+}
+
+/* Tagline style for the first page */
+.tagline {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Regular font */
+    font-size: 18px;
+    color: #7a6a53;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.5;
+    text-align: center;
+    /* Ensure tagline text is centered */
+    width: 100%;
+    /* Ensure it spans full width for centering */
+}
+
+/* Responsive adjustments for the new heading/tagline and grid */
+@media (max-width: 1024px) {
+    .book-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        /* 3 columns on medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .main-heading {
+        font-size: 40px;
+    }
+
+    .tagline {
+        font-size: 16px;
+    }
+
+    .book-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        /* 2 columns on tablets */
+    }
+
+    .book-grid .search-result-item img {
+        width: 100px;
+        height: 150px;
+    }
+
+    .customization-heading,
+    .share-page-heading {
+        font-size: 1.8rem;
+    }
+
+    .customization-subheading {
+        font-size: 1rem;
+    }
+
+    .book-first-page {
+        padding: 20px;
+    }
+
+    .main-menu-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        min-width: 100px;
+    }
+
+    .font-btn,
+    .sticker-btn,
+    .share-btn {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+
+    .sticker-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+
+    .share-content {
+        flex-direction: column;
+        /* Stack vertically on smaller screens */
+        align-items: center;
+        gap: 20px;
+    }
+
+    .share-book-preview,
+    .share-details-wrapper {
+        min-width: unset;
+        /* Remove min-width on small screens */
+        width: 100%;
+        /* Take full width */
+    }
+
+    .share-book-preview {
+        padding: 0;
+        /* Remove padding if stacking */
+    }
+
+    .share-details-wrapper {
+        flex-direction: column;
+        /* Stack input and button vertically */
+        padding: 15px;
+        /* Adjust padding for smaller screens */
+    }
+
+    .share-input-group {
+        width: 100%;
+        /* Input takes full width when stacked */
+    }
+
+    .view-only-heading {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-heading {
+        font-size: 32px;
+    }
+
+    .tagline {
+        font-size: 14px;
+    }
+
+    .book-grid {
+        grid-template-columns: 1fr;
+        /* 1 column on small mobiles */
+    }
+
+    .book-grid .search-result-item img {
+        width: 100px;
+        height: 150px;
+    }
+
+    .customization-heading,
+    .share-page-heading {
+        font-size: 1.5rem;
+    }
+
+    .customization-subheading {
+        font-size: 0.9rem;
+    }
+
+    .note-input {
+        padding: 15px;
+    }
+
+    .main-menu-btn {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+        min-width: 90px;
+    }
+
+    .font-selection-tools,
+    .sticker-tools,
+    .share-options {
+        gap: 8px;
+    }
+
+    .view-only-heading {
+        font-size: 1.2rem;
+    }
+} 

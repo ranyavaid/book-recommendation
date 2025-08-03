@@ -1,0 +1,152 @@
+/* Search Bar Section */
+.search-bar-section {
+    margin-top: 30px;
+    /* Space from tagline */
+    margin-bottom: 40px;
+    width: 100%;
+    max-width: 600px;
+    /* Limits width, but still centered by parent */
+    /* text-align: center; Removed as parent flex handles centering */
+}
+
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 0 10px;
+    /* Padding for icons inside */
+    background-color: white;
+    transition: border-color 0.3s ease;
+    width: 100%;
+    /* Ensure it takes full width of its parent (.search-bar-section) */
+}
+
+.search-input-wrapper:focus-within {
+    border-color: #A0522D;
+}
+
+.search-icon,
+.clear-search-btn {
+    color: #999;
+    font-size: 1.1rem;
+    padding: 8px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.search-icon {
+    margin-right: 8px;
+}
+
+.clear-search-btn {
+    margin-left: 8px;
+    background: none;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+}
+
+.clear-search-btn:hover {
+    color: #5d4e37;
+}
+
+.search-input {
+    flex-grow: 1;
+    /* Takes up available space */
+    padding: 12px 0;
+    /* Adjust padding as icons have inner padding */
+    border: none;
+    /* Remove individual border */
+    border-radius: 0;
+    font-size: 1rem;
+    outline: none;
+    background: none;
+}
+
+/* Book Selection Section (for top books / search results) */
+.book-selection-section {
+    margin-bottom: 40px;
+    width: 100%;
+    max-width: 900px;
+    /* Wider for the grid */
+    text-align: center;
+    /* Center the title within this section */
+    /* No background, padding, border-radius, box-shadow to make it "float" */
+}
+
+.section-title {
+    font-size: 1.5rem;
+    /* Smaller font size */
+    margin-top: 30px;
+    margin-bottom: 20px;
+    color: #8B7355;
+    font-weight: 600;
+}
+
+/* Book Grid for top-rated books and search results */
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    justify-items: center;
+    padding: 10px;
+}
+
+/* Individual book item (base style for both list and grid) */
+.search-result-item {
+    display: flex;
+    flex-direction: column;
+    /* Default to vertical for grid */
+    align-items: center;
+    text-align: center;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    width: auto;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.search-result-item:hover {
+    transform: translateY(-3px);
+}
+
+.search-result-item img {
+    width: 120px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow for images */
+}
+
+.search-result-info {
+    flex-grow: 1;
+    text-align: center;
+    /* Center text within the grid item */
+}
+
+.search-result-info h4 {
+    font-weight: 600;
+    color: #5d4e37;
+    margin-bottom: 4px;
+    font-size: 1.2rem;
+}
+
+.search-result-info p {
+    font-size: 0.95rem;
+    color: #7a6a53;
+}
+
+.loading-indicator {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: #8B7355;
+} 

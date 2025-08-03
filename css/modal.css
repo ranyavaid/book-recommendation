@@ -1,0 +1,85 @@
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    color: #5d4e37;
+}
+
+.modal-content p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.modal-btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.modal-btn.confirm-yes {
+    background: #A0522D;
+    color: white;
+    border: none;
+}
+
+.modal-btn.confirm-yes:hover {
+    background: #8B4513;
+}
+
+.modal-btn.confirm-no {
+    background: #ddd;
+    color: #5d4e37;
+    border: 1px solid #ccc;
+}
+
+.modal-btn.confirm-no:hover {
+    background: #ccc;
+}
+
+/* Tooltip styles */
+#copyTooltip {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+    /* Allows clicks to pass through */
+}
+
+#copyTooltip.show {
+    opacity: 1;
+} 

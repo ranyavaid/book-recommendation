@@ -1,0 +1,187 @@
+/* New Share Page Styles */
+#sharePage {
+    display: none;
+    /* Hidden by default */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+    padding-top: 20px;
+    margin: 0 auto;
+}
+
+#sharePage.visible {
+    display: flex;
+}
+
+.share-page-nav {
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.share-page-nav a {
+    display: inline-flex;
+    align-items: center;
+    color: #8B7355;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.share-page-nav a:hover {
+    color: #A0522D;
+}
+
+.share-page-nav a i {
+    margin-right: 8px;
+}
+
+/* New style for the view-only heading */
+.view-only-heading {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #5d4e37;
+    margin-bottom: 20px;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.share-page-heading {
+    font-family: 'Inter', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #5d4e37;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Share Content - Main Flex Container */
+.share-content {
+    display: flex;
+    flex-direction: column;
+    /* Changed to column for top-bottom stacking */
+    align-items: center;
+    /* Center content horizontally */
+    gap: 30px;
+    /* Gap between book and new floating menu */
+    width: 100%;
+    max-width: 800px;
+    /* Adjusted max-width for column layout */
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    flex-wrap: wrap;
+}
+
+.share-book-preview {
+    width: 100%;
+    /* Take full width of parent */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0;
+    /* No padding here, book-container has its own */
+}
+
+/* New style for the floating share details wrapper */
+.share-details-wrapper {
+    display: flex;
+    flex-direction: row;
+    /* Changed to row for side-by-side */
+    align-items: center;
+    /* Center items vertically */
+    gap: 15px;
+    /* Gap between input and button */
+    margin-top: 20px;
+    /* Space from the book */
+    padding: 15px 25px;
+    /* Match floating-menu padding */
+    background: #fff;
+    border-radius: 15px;
+    /* Match floating-menu border-radius */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    /* Match floating-menu box-shadow */
+    width: fit-content;
+    /* Shrink to content */
+    max-width: 600px;
+    /* Increased max-width for side-by-side */
+    flex-wrap: wrap;
+    /* Allow wrapping on smaller screens */
+    justify-content: center;
+    /* Center content horizontally */
+}
+
+/* Adjusted input group for side-by-side */
+.share-input-group {
+    flex-grow: 1;
+    /* Allow input to take available space */
+    display: flex;
+    /* Ensure it's a flex container for its content */
+    flex-direction: column;
+    /* Keep label/input stacked if there were a label */
+    width: auto;
+    /* Allow width to be determined by flex-grow */
+    min-width: 200px;
+    /* Ensure a reasonable minimum width */
+    gap: 0;
+    /* No gap needed if label is removed */
+}
+
+.share-input-group input[type="text"] {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+    background: #f8f8f8;
+    /* Added background to input */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    /* Subtle inner shadow */
+    width: 100%;
+    /* Take full width of its flex container */
+}
+
+.share-input-group input[type="text"]:focus {
+    border-color: #A0522D;
+    background: white;
+}
+
+.share-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    /* No width: 100% here, let it shrink to content */
+}
+
+/* Styling for the larger Copy Shareable Link button */
+.share-btn.copy-link-btn {
+    padding: 12px 20px;
+    /* Match main-menu-btn padding */
+    font-size: 1rem;
+    /* Match main-menu-btn font size */
+    border-radius: 8px;
+    /* Match main-menu-btn border-radius */
+    background: linear-gradient(135deg, #A0522D 0%, #8B7355 100%);
+    /* Keep original gradient */
+    color: white;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    /* min-width: 180px; Removed, let it size based on content and padding */
+    white-space: nowrap;
+    /* Prevent text from wrapping */
+}
+
+.share-btn.copy-link-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Styles for view-only mode */
+.view-only-hidden {
+    display: none !important;
+} 
