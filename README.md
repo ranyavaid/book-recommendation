@@ -37,4 +37,4 @@ This app is designed to be deployed as a static website. You can deploy it to:
 
 ## License
 
-MIT License 
+MIT License
