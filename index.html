@@ -1443,7 +1443,7 @@
 
                 <div class="sub-menu" id="shareSubMenu">
                     <div class="share-options">
-                        <button class="share-btn" onclick="window.bookApp.copyLink()">Copy Link</button>
+                        <button class="share-btn" onclick="window.bookApp.copyShareableLink()">Copy Link</button>
                         <button class="share-btn" onclick="window.bookApp.sendEmail()">Email</button>
                         <button class="share-btn secondary" onclick="window.bookApp.shareSocial()">Share</button>
                     </div>
@@ -2513,13 +2513,18 @@
                         const docRef = await addDoc(collection(this.db, `artifacts/${ appId }/public/data/bookCustomizations`), customizationData);
                         const shareableLink = `${ window.location.origin }${ window.location.pathname }?view=${ docRef.id }`;
 
-                        // Copy to clipboard
-                        const dummyElement = document.createElement('textarea');
-                        dummyElement.value = shareableLink;
-                        document.body.appendChild(dummyElement);
-                        dummyElement.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(dummyElement);
+                        // Copy to clipboard using modern API
+                        try {
+                            await navigator.clipboard.writeText(shareableLink);
+                        } catch (err) {
+                            // Fallback for older browsers
+                            const dummyElement = document.createElement('textarea');
+                            dummyElement.value = shareableLink;
+                            document.body.appendChild(dummyElement);
+                            dummyElement.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(dummyElement);
+                        }
 
                         // Show tooltip
                         if (this.copyTooltip)
